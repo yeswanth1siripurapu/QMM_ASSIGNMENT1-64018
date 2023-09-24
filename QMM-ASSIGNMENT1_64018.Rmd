@@ -1,0 +1,186 @@
+---
+title: "QMM-ASSIGNMENT1_64018"
+author: "Yeswanth Siripurapu"
+date: "2023-09-24"
+output:
+  pdf_document: default
+  html_document: default
+---
+#Summary:
+#a) A maximum revenue of $1780 can be achieved by making 40 artisanal truffles,
+#12 handmade chocolate nuggets, and 4 chocolate bars.
+#b) Chocolate bars, handmade chocolate nuggets, and artisanal truffles 
+#constrain binding.
+#c)In terms of fliesability, artisanal truffles have a shadow price of $2 and a
+#range of 47.5 to 51.6 pounds.
+#c) Made-to-Order Chocolate Nuggets: Shadow Price = $30,
+#Range of Fiesability = 30 to 52 Pounds e)
+#Chocolate Bars: Shadow Price = $6, Range of Fiesability = 29.1 to 50 Pounds
+#d) Range of Optimality: Artisanal Truffles = $20 to $38,
+#Handmade Chocolate Nuggets = $22.5 to $26.67
+#and Chocolate Bars = $18.75 to $35.00
+
+```{r}
+#Load lpSolveAPI
+library(lpSolveAPI)
+
+
+
+# make an lp object with 0 constraints and 3 decision variables
+lprec <- make.lp(0, 3)
+
+# Now create the objective function. The default is a minimization problem.
+set.objfn(lprec, c(35, 25, 20))
+
+# As the default is a minimization problem, we change the direction to set 
+#maximization
+lp.control(lprec,sense='max')
+
+# Add the four constraints
+add.constraint(lprec, c(1, 1/2, 1), "<=", 50)
+add.constraint(lprec, c(1, 2/3, 1/2), "<=", 50)
+add.constraint(lprec, c(1/2, 2/3, 1/2), "<=", 30)
+add.constraint(lprec, c(0, 1, 0), ">=", 10)
+
+
+# Set bounds for variables.
+set.bounds(lprec, lower = c(0, 0, 0), columns = c(1, 2, 3))
+
+
+# To identify the variables and constraints, we can
+# set variable names and name the constraints
+RowNames <- c("CacaoButter", "Honey", "DiaryCream", "NUggetsOrder")
+ColNames <- c("AritisanTruffel", "ChocalateNuggets", "ChocalateBars")
+dimnames(lprec) <- list(RowNames, ColNames)
+
+
+# Now, print out the model
+lprec
+#The model can also be saved to a file"
+write.lp(lprec, filename = "chocalte.lp", type = "lp")
+#Here we are solving now the Above LP Problem
+
+solve(lprec)
+
+#The result above shows that there was a successful solution rather than that
+#the answer is 0. We now present the objective function's value as well as the 
+#variables.
+get.objective(lprec)
+varV <- get.variables(lprec)
+#The revenue is 1780, the first variable's value is 40, and the second variable
+
+#variable name next to the answer, reading the output has an issue. The order in
+#which the variables occur in the LP formulation determines the order in which 
+#they are output. 
+#For us, it was handcrafted chocolate nuggets, artisan truffles, and ultimately
+#chocolate bars. Before examining other output values, think about using a
+#different method to input the problem formuation. We will construct a text file 
+#containing the problem formulation in the LP format. The write.lp statement was
+#used to create an lp file as well. Let's now examine the choclate.lp file.
+#A file can be double-clicked.
+
+
+y <- read.lp("chocalte.lp") # create an lp object y
+y # display y
+solve(y)
+
+
+get.objective(y) # get objective value
+get.variables(y) # get values of decision variables
+get.constraints(y) # get constraint RHS values
+
+#2.Report the shadow price and the range of feasibility of each binding 
+#constraint.
+get.sensitivity.rhs(lprec) # get shadow prices
+get.sensitivity.obj(lprec) # get reduced cost
+
+
+#3.If the local store increases the daily order to 25 pounds of chocolatenuggets
+#how much of each product should Francesco make?
+
+
+#Make an lp object with 0 constraints and 3 decision variables
+lprec <- make.lp(0, 3)
+
+#Now create the objective function. The default is a minimization problem.
+set.objfn(lprec, c(35, 25, 20))
+
+#As the default is a minimization problem, we change the direction to set
+lp.control(lprec,sense='max')
+
+#Add the four constraintsUpdatedconstraintsfrom 10to25 Poundsforfourthconstraint
+
+add.constraint(lprec, c(1, 1/2, 1), "<=", 50)
+add.constraint(lprec, c(1, 2/3, 1/2), "<=", 50)
+add.constraint(lprec, c(1/2, 2/3, 1/2), "<=", 30)
+add.constraint(lprec, c(0, 1, 0), ">=", 25)
+
+#Set bounds for variables.
+set.bounds(lprec, lower = c(0, 0, 0), columns = c(1, 2, 3)) 
+
+
+#To identify the variables and constraints, we can set variable names and name 
+#constraints
+RowNames <- c("CacaoButter", "Honey", "DiaryCream", "NUggetsOrder")
+ColNames <- c("AritisanTruffel", "ChocalateNuggets", "ChocalateBars")
+dimnames(lprec) <- list(RowNames, ColNames)
+
+# Now, print out the model
+lprec
+write.lp(lprec, filename = "chocalte.lp", type = "lp")
+
+#To identify the variables and constraints, we can set variable names and name
+#constraints
+
+solve(lprec)
+get.objective(lprec)
+y <- read.lp("chocalte.lp") # create an lp object y
+y # display y
+solve(lprec)
+get.objective(lprec) # get objective value
+get.variables(lprec) # get values of decision variables
+get.constraints(lprec) # get constraint RHS values
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
